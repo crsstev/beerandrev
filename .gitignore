@@ -1,0 +1,50 @@
+# Environment variables - NEVER commit
+.env
+.env.local
+.env.*.local
+app/.env.dev
+app/.env.prod
+bot/.env
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+
+# Django
+*.log
+local_settings.py
+/staticfiles/
+/media/
+db.sqlite3
+*.sqlite3
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.DS_Store
+Thumbs.db
+
+# Test/debug files
+test_*.py
+*_test.py
+
+# Node/npm (if added later)
+node_modules/
+package-lock.json
+
+# tmp/backup files
+*.bak
+*.backup
+/tmp/

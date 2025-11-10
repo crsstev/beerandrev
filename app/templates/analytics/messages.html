@@ -1,0 +1,38 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="analytics-container">
+    <h1>💬 Message Analytics</h1>
+    <table class="stats-table">
+        <thead>
+            <tr>
+                <th>Member</th>
+                <th>Messages</th>
+                <th>Total Characters</th>
+                <th>Avg Length</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in message_users %}
+            <tr>
+                <td>{{ item.user.username }}</td>
+                <td>{{ item.messages }}</td>
+                <td>{{ item.characters }}</td>
+                <td>{{ item.avg_length }}</td>
+            </tr>
+            {% empty %}
+            <tr><td colspan="4">No message data yet</td></tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <a href="{% url 'analytics:dashboard' %}" class="btn">← Back to Dashboard</a>
+</div>
+
+<style>
+.analytics-container { max-width: 1200px; margin: 40px auto; padding: 20px; }
+.stats-table { width: 100%; border-collapse: collapse; margin: 30px 0; }
+.stats-table th, .stats-table td { padding: 12px; text-align: left; border-bottom: 1px solid #ddd; }
+.stats-table th { background: #667eea; color: white; }
+.stats-table tr:hover { background: rgba(102, 126, 234, 0.1); }
+</style>
+{% endblock %}

@@ -1,0 +1,471 @@
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beer & Revolution</title>
+    
+    {% load static %}
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', sans-serif; background: #0e0e0e; color: #e0e0e0; }
+        nav { display: none; }
+        
+        main { padding: 40px 20px; }
+        
+        .wp-block-group { margin: 0; }
+        .alignfull { width: 100%; }
+        .is-layout-flow { display: flow; }
+        .is-layout-constrained { max-width: 1200px; margin: 0 auto; }
+        .has-global-padding { padding: 20px; }
+        
+        .wp-block-image.aligncenter { text-align: center; }
+        .logo-image { max-width: 256px; height: auto; margin: 20px 0; }
+        
+        /* Analytics Dashboard Styles */
+        .analytics-container {
+            display: grid;
+            grid-template-columns: 380px 1fr;
+            gap: 30px;
+            max-width: 1400px;
+            margin: 40px auto 0;
+            align-items: start;
+        }
+        
+        .analytics-content {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            grid-column: 1 / -1;
+        }
+
+        .stat-panel {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            transition: all 0.3s ease;
+        }
+
+        .stat-panel:hover {
+            border-color: #3b82f6;
+            transform: translateY(-4px);
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #999;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        .stat-value {
+            font-size: 32px;
+            font-weight: 600;
+            color: #3b82f6;
+            margin-bottom: 5px;
+        }
+
+        .stat-subtitle {
+            font-size: 11px;
+            color: #666;
+        }
+
+        .leaderboards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            grid-column: 1 / -1;
+        }
+
+        .leaderboard {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            border-radius: 8px;
+            padding: 20px;
+            transition: all 0.3s ease;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+
+        .leaderboard:hover {
+            border-color: currentColor;
+        }
+
+        .leaderboard h3 {
+            font-size: 16px;
+            margin-bottom: 20px;
+            color: #e0e0e0;
+            border-bottom: 2px solid;
+            padding-bottom: 10px;
+            font-weight: 600;
+        }
+
+        .leaderboard-gamers h3 { border-bottom-color: #ef4444; }
+        .leaderboard-games h3 { border-bottom-color: #3b82f6; }
+        .leaderboard-voice h3 { border-bottom-color: #10b981; }
+        .leaderboard-chatters h3 { border-bottom-color: #a855f7; }
+
+        .leaderboard-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px 0;
+            border-bottom: 1px solid #333;
+            font-size: 13px;
+        }
+
+        .leaderboard-item:last-child {
+            border-bottom: none;
+        }
+
+        .leaderboard-rank {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            color: white;
+            font-weight: 600;
+            margin-right: 10px;
+            flex-shrink: 0;
+            font-size: 12px;
+        }
+
+        .leaderboard-gamers .leaderboard-rank.rank-1 { background: #ef4444; }
+        .leaderboard-gamers .leaderboard-rank.rank-2 { background: #f87171; }
+        .leaderboard-gamers .leaderboard-rank.rank-3 { background: #fca5a5; }
+        .leaderboard-gamers .leaderboard-rank.rank-4 { background: #fecaca; }
+        .leaderboard-gamers .leaderboard-rank.rank-5 { background: #fee2e2; }
+
+        .leaderboard-games .leaderboard-rank.rank-1 { background: #3b82f6; }
+        .leaderboard-games .leaderboard-rank.rank-2 { background: #60a5fa; }
+        .leaderboard-games .leaderboard-rank.rank-3 { background: #93c5fd; }
+        .leaderboard-games .leaderboard-rank.rank-4 { background: #bfdbfe; }
+        .leaderboard-games .leaderboard-rank.rank-5 { background: #dbeafe; }
+
+        .leaderboard-voice .leaderboard-rank.rank-1 { background: #10b981; }
+        .leaderboard-voice .leaderboard-rank.rank-2 { background: #34d399; }
+        .leaderboard-voice .leaderboard-rank.rank-3 { background: #6ee7b7; }
+        .leaderboard-voice .leaderboard-rank.rank-4 { background: #a7f3d0; }
+        .leaderboard-voice .leaderboard-rank.rank-5 { background: #d1fae5; }
+
+        .leaderboard-chatters .leaderboard-rank.rank-1 { background: #a855f7; }
+        .leaderboard-chatters .leaderboard-rank.rank-2 { background: #c084fc; }
+        .leaderboard-chatters .leaderboard-rank.rank-3 { background: #d8b4fe; }
+        .leaderboard-chatters .leaderboard-rank.rank-4 { background: #e9d5ff; }
+        .leaderboard-chatters .leaderboard-rank.rank-5 { background: #f3e8ff; }
+
+        .leaderboard-name {
+            flex: 1;
+            margin-left: 10px;
+        }
+
+        .leaderboard-value {
+            font-weight: 600;
+        }
+
+        .leaderboard-gamers .leaderboard-value { color: #ef4444; }
+        .leaderboard-games .leaderboard-value { color: #3b82f6; }
+        .leaderboard-voice .leaderboard-value { color: #10b981; }
+        .leaderboard-chatters .leaderboard-value { color: #a855f7; }
+
+        .empty-state {
+            padding: 30px 0;
+            text-align: center;
+            color: #666;
+            font-size: 13px;
+        }
+
+        /* Servers Live Panel */
+        .servers-live-panel {
+            padding: 24px;
+            margin: 40px auto;
+            max-width: 1200px;
+        }
+
+        .servers-title {
+            text-align: center;
+            color: #e0e0e0;
+            font-size: 32px;
+            font-weight: 900;
+            letter-spacing: 0.5px;
+            margin: 0 0 24px 0;
+            font-family: 'Arial Black', 'Trebuchet MS', sans-serif;
+        }
+
+        .servers-button-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 24px;
+        }
+
+        .btn-primary {
+            background-color: #3b82f6;
+            color: white;
+            padding: 12px 28px;
+            border-radius: 6px;
+            text-decoration: none;
+            font-weight: 500;
+            font-size: 14px;
+            transition: all 0.2s;
+            border: none;
+            cursor: pointer;
+        }
+
+        .btn-primary:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+        }
+
+        .servers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 180px));
+            gap: 12px;
+            justify-content: center;
+        }
+
+        .server-card {
+            background: #1a1a1a;
+            border-radius: 8px;
+            overflow: hidden;
+            transition: transform 0.2s, box-shadow 0.2s;
+            cursor: pointer;
+            border: 1px solid #333;
+        }
+
+        .server-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 8px 16px rgba(59, 130, 246, 0.2);
+            border-color: #3b82f6;
+        }
+
+        .server-cover {
+            width: 100%;
+            height: 250px;
+            object-fit: cover;
+            display: block;
+            background: #0f0f0f;
+        }
+
+        .server-cover-placeholder {
+            width: 100%;
+            height: 250px;
+            background: #0f0f0f;
+        }
+
+        .no-servers {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: #666;
+            padding: 40px 20px;
+            font-size: 14px;
+        }
+
+        .discord-widget-container {
+            display: flex;
+            justify-content: center;
+        }
+
+        @media (max-width: 1200px) {
+            .analytics-container {
+                grid-template-columns: 1fr;
+                gap: 20px;
+            }
+
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            .leaderboards {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (max-width: 768px) {
+            .stats-grid { 
+                grid-template-columns: 1fr; 
+            }
+
+            .leaderboards { 
+                grid-template-columns: 1fr; 
+            }
+            
+            .servers-title {
+                font-size: 24px;
+            }
+
+            .servers-grid {
+                grid-template-columns: repeat(auto-fit, minmax(130px, 130px));
+                gap: 10px;
+            }
+            
+            .server-cover {
+                height: 180px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="wp-block-group is-layout-flow">
+        <div class="wp-block-group alignfull has-global-padding is-layout-constrained">
+            <div class="wp-block-group has-global-padding is-layout-constrained">
+                <figure class="wp-block-image aligncenter size-full">
+                    <img width="256" height="256" src="{% static 'images/bnr_darker_256.png' %}" alt="Beer & Revolution Logo" class="logo-image" />
+                </figure>
+            </div>
+        </div>
+
+        <!-- Servers Currently Live -->
+        <div class="servers-live-panel">
+            <h2 class="servers-title">Servers Currently Live</h2>
+            
+            <div class="servers-grid">
+                {% for server in servers %}
+                <div class="server-card">
+                    {% if server.cover_image %}
+                        <img src="{{ server.cover_image }}" alt="{{ server.module_display_name }}" class="server-cover">
+                    {% else %}
+                        <div class="server-cover-placeholder"></div>
+                    {% endif %}
+                </div>
+                {% empty %}
+                <p class="no-servers">No servers currently running</p>
+                {% endfor %}
+            </div>
+
+            <div class="servers-button-container">
+                <a href="https://amp.beerandrevolution.net" class="btn-primary" target="_blank">
+                    Management Panel
+                </a>
+            </div>
+        </div>
+
+        <!-- Discord Widget & Analytics Container -->
+        <div class="analytics-container">
+            <!-- Discord Widget (Left) -->
+            <div class="discord-widget-container">
+                <iframe src="https://discord.com/widget?id=208348231938080769&theme=dark" 
+                        width="350" height="500" 
+                        allowtransparency="true" 
+                        frameborder="0" 
+                        sandbox="allow-popups allow-popups-to-escape-sandbox allow-same-origin allow-scripts">
+                </iframe>
+            </div>
+
+            <!-- Analytics Dashboard (Right) -->
+            <div class="analytics-content">
+                <!-- Key Metrics -->
+                <div class="stats-grid">
+                    <div class="stat-panel">
+                        <div class="stat-label">👥 Active Players</div>
+                        <div class="stat-value">{{ total_users }}</div>
+                        <div class="stat-subtitle">tracked players</div>
+                    </div>
+
+                    <div class="stat-panel">
+                        <div class="stat-label">⏱️ Game Hours</div>
+                        <div class="stat-value">{{ total_gaming_hours }}</div>
+                        <div class="stat-subtitle">total hours</div>
+                    </div>
+
+                    <div class="stat-panel">
+                        <div class="stat-label">🎙️ Voice Hours</div>
+                        <div class="stat-value">{{ total_voice_hours }}</div>
+                        <div class="stat-subtitle">in voice</div>
+                    </div>
+
+                    <div class="stat-panel">
+                        <div class="stat-label">💬 Messages</div>
+                        <div class="stat-value">{{ total_messages }}</div>
+                        <div class="stat-subtitle">sent</div>
+                    </div>
+                </div>
+
+                <!-- Leaderboards -->
+                <div class="leaderboards">
+                    <div class="leaderboard leaderboard-gamers">
+                        <h3>Top Drunkards (Time in Game)</h3>
+                        {% if top_gamers %}
+                            {% for item in top_gamers %}
+                            <div class="leaderboard-item">
+                                <div style="display: flex; align-items: center; flex: 1;">
+                                    <div class="leaderboard-rank rank-{{ forloop.counter }}">{{ forloop.counter }}</div>
+                                    <div class="leaderboard-name">{{ item.user.username }}</div>
+                                </div>
+                                <div class="leaderboard-value">{{ item.hours }}h</div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state">No gameplay data yet</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="leaderboard leaderboard-games">
+                        <h3>Most Played Games</h3>
+                        {% if top_games %}
+                            {% for game, hours in top_games %}
+                            <div class="leaderboard-item">
+                                <div style="display: flex; align-items: center; flex: 1;">
+                                    <div class="leaderboard-rank rank-{{ forloop.counter }}">{{ forloop.counter }}</div>
+                                    <div class="leaderboard-name">{{ game }}</div>
+                                </div>
+                                <div class="leaderboard-value">{{ hours }}h</div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state">No game data yet</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="leaderboard leaderboard-voice">
+                        <h3>Top Voice</h3>
+                        {% if top_voice %}
+                            {% for item in top_voice %}
+                            <div class="leaderboard-item">
+                                <div style="display: flex; align-items: center; flex: 1;">
+                                    <div class="leaderboard-rank rank-{{ forloop.counter }}">{{ forloop.counter }}</div>
+                                    <div class="leaderboard-name">{{ item.user.username }}</div>
+                                </div>
+                                <div class="leaderboard-value">{{ item.hours }}h</div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state">No voice data yet</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="leaderboard leaderboard-chatters">
+                        <h3>Top Chat</h3>
+                        {% if top_chatters %}
+                            {% for item in top_chatters %}
+                            <div class="leaderboard-item">
+                                <div style="display: flex; align-items: center; flex: 1;">
+                                    <div class="leaderboard-rank rank-{{ forloop.counter }}">{{ forloop.counter }}</div>
+                                    <div class="leaderboard-name">{{ item.user.username }}</div>
+                                </div>
+                                <div class="leaderboard-value">{{ item.messages }}</div>
+                            </div>
+                            {% endfor %}
+                        {% else %}
+                            <div class="empty-state">No message data yet</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+</body>
+</html>

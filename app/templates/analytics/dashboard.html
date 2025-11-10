@@ -1,0 +1,91 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="analytics-container">
+    <h1>📊 Server Analytics Dashboard</h1>
+
+    <div class="stats-grid">
+        <div class="stat-card">
+            <h3>👥 Active Players</h3>
+            <p class="stat-value">{{ total_users }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>🎮 Game Sessions</h3>
+            <p class="stat-value">{{ total_game_sessions }}</p>
+        </div>
+        <div class="stat-card">
+            <h3>⏱️ Gaming Hours</h3>
+            <p class="stat-value">{{ total_gaming_hours }}h</p>
+        </div>
+        <div class="stat-card">
+            <h3>🎙️ Voice Hours</h3>
+            <p class="stat-value">{{ total_voice_hours }}h</p>
+        </div>
+        <div class="stat-card">
+            <h3>💬 Messages</h3>
+            <p class="stat-value">{{ total_messages }}</p>
+        </div>
+    </div>
+
+    <div class="leaderboards">
+        <div class="leaderboard">
+            <h2>🏆 Top Gamers</h2>
+            <ol>
+                {% for item in top_gamers %}
+                <li>{{ item.user.username }} - {{ item.hours }}h</li>
+                {% empty %}
+                <li>No data yet</li>
+                {% endfor %}
+            </ol>
+            <a href="{% url 'analytics:games' %}" class="btn">View All Games →</a>
+        </div>
+
+        <div class="leaderboard">
+            <h2>🎮 Most Played Games</h2>
+            <ol>
+                {% for game, hours in top_games %}
+                <li>{{ game }} - {{ hours }}h</li>
+                {% empty %}
+                <li>No data yet</li>
+                {% endfor %}
+            </ol>
+        </div>
+
+        <div class="leaderboard">
+            <h2>🎙️ Voice Legends</h2>
+            <ol>
+                {% for item in top_voice %}
+                <li>{{ item.user.username }} - {{ item.hours }}h</li>
+                {% empty %}
+                <li>No data yet</li>
+                {% endfor %}
+            </ol>
+            <a href="{% url 'analytics:voice' %}" class="btn">View All Voice →</a>
+        </div>
+
+        <div class="leaderboard">
+            <h2>💬 Top Chatters</h2>
+            <ol>
+                {% for item in top_chatters %}
+                <li>{{ item.user.username }} - {{ item.messages }} messages</li>
+                {% empty %}
+                <li>No data yet</li>
+                {% endfor %}
+            </ol>
+            <a href="{% url 'analytics:messages' %}" class="btn">View All Messages →</a>
+        </div>
+    </div>
+</div>
+
+<style>
+.analytics-container { max-width: 1200px; margin: 40px auto; padding: 20px; }
+.stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin: 30px 0; }
+.stat-card { background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); padding: 20px; border-radius: 10px; color: white; text-align: center; }
+.stat-value { font-size: 32px; font-weight: bold; margin: 10px 0; }
+.leaderboards { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; margin-top: 40px; }
+.leaderboard { background: rgba(102, 126, 234, 0.1); padding: 20px; border-radius: 10px; border-left: 4px solid #667eea; }
+.leaderboard h2 { margin-top: 0; color: #667eea; }
+.leaderboard ol { padding-left: 20px; }
+.leaderboard li { padding: 8px 0; border-bottom: 1px solid rgba(102, 126, 234, 0.2); }
+</style>
+{% endblock %}

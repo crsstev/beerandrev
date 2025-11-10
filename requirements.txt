@@ -1,0 +1,5 @@
+discord.py==2.3.2
+psycopg2-binary==2.9.9
+Django==4.2
+python-dotenv==1.0.0
+dj-database-url==2.1.0

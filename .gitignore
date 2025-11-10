@@ -48,3 +48,4 @@ package-lock.json
 *.bak
 *.backup
 /tmp/
+deploy_to_production.sh

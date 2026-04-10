@@ -167,9 +167,10 @@ async def on_ready():
 
 @bot.event
 async def on_presence_update(before, after):
+    if after.bot:
+        return
     print(f"PRESENCE: {after.name}", flush=True)
-    
-    # Run DB operations in separate thread
+
     thread = threading.Thread(target=insert_activity, args=(after.id, str(after), after.activities))
     thread.daemon = True
     thread.start()

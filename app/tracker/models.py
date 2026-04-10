@@ -18,6 +18,7 @@ class GameStatistic(models.Model):
     total_sessions = models.IntegerField(default=0)
     total_seconds_this_week = models.BigIntegerField(default=0)
     total_seconds_this_month = models.BigIntegerField(default=0)
+    steam_app_id = models.IntegerField(null=True, blank=True)
     last_updated = models.DateTimeField(auto_now=True)
 
     def __str__(self):
@@ -134,6 +135,7 @@ class AMPServer(models.Model):
     active_users = models.IntegerField(default=0)
     cover_image = models.CharField(max_length=255, null=True, blank=True)
     cover_fetched = models.BooleanField(default=False)
+    steam_app_id = models.IntegerField(null=True, blank=True)
     display_order = models.IntegerField(default=0)
     updated_at = models.DateTimeField(auto_now=True)
     created_at = models.DateTimeField(auto_now_add=True)

@@ -7,6 +7,7 @@ from tracker.models import (
     GameStatistic, UserStatistic, WeeklyUserStatistic, WeeklyGameStatistic,
     GameSession, VoiceSession, Message, DiscordUser, ActivityEvent
 )
+from tracker.steam import fetch_steam_app_id
 
 EASTERN = ZoneInfo('America/New_York')
 
@@ -41,6 +42,8 @@ class Command(BaseCommand):
 
         for game_name, total_seconds, count in cursor.fetchall():
             stat, created = GameStatistic.objects.get_or_create(game_name=game_name)
+            if created:
+                stat.steam_app_id = fetch_steam_app_id(game_name)
             stat.total_seconds += total_seconds
             stat.total_sessions += count
 

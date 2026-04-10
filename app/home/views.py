@@ -1,3 +1,4 @@
+import re
 from django.shortcuts import render
 from django.views import View
 from django.db import connection
@@ -15,6 +16,17 @@ def get_week_start_utc(now):
         hour=0, minute=0, second=0, microsecond=0
     )
     return week_start_eastern.astimezone(ZoneInfo('UTC')), week_start_eastern.date()
+
+def users_sorted(scores_by_id, limit=5):
+    result = []
+    for user_id, score in sorted(scores_by_id.items(), key=lambda x: x[1], reverse=True):
+        try:
+            result.append((DiscordUser.objects.get(id=user_id), score))
+            if len(result) >= limit:
+                break
+        except DiscordUser.DoesNotExist:
+            pass
+    return result
 
 
 class HomeView(View):
@@ -72,18 +84,16 @@ class HomeView(View):
         for user_id, seconds in cursor.fetchall():
             user_gaming_weekly[user_id] = user_gaming_weekly.get(user_id, 0) + seconds
 
-        top_gamers_dict = {}
-        for user_id, seconds in user_gaming_weekly.items():
-            try:
-                user = DiscordUser.objects.get(id=user_id)
-                top_gamers_dict[user.username] = seconds
-            except DiscordUser.DoesNotExist:
-                pass
-
-        top_gamers = sorted(top_gamers_dict.items(), key=lambda x: x[1], reverse=True)[:5]
-        top_gamers = [{'user': {'username': name}, 'hours': int(seconds // 3600)} for name, seconds in top_gamers]
+        top_gamers = [
+            {'user': user, 'hours': int(seconds // 3600)}
+            for user, seconds in users_sorted(user_gaming_weekly)
+        ]
 
         # Weekly top games
+        def _norm(name):
+            return re.sub(r'[™®©]', '', name).strip().lower()
+        steam_ids = {_norm(s.game_name): s.steam_app_id for s in GameStatistic.objects.exclude(steam_app_id__isnull=True)}
+
         game_seconds_weekly = {}
         for stat in WeeklyGameStatistic.objects.filter(week_start=week_start_date):
             game_seconds_weekly[stat.game_name] = stat.seconds
@@ -99,8 +109,10 @@ class HomeView(View):
         for game_name, seconds in cursor.fetchall():
             game_seconds_weekly[game_name] = game_seconds_weekly.get(game_name, 0) + seconds
 
-        top_games = sorted(game_seconds_weekly.items(), key=lambda x: x[1], reverse=True)[:5]
-        top_games = [(name, int(seconds // 3600)) for name, seconds in top_games]
+        top_games = [
+            {'name': name, 'hours': int(seconds // 3600), 'steam_app_id': steam_ids.get(_norm(name))}
+            for name, seconds in sorted(game_seconds_weekly.items(), key=lambda x: x[1], reverse=True)[:5]
+        ]
 
         # Top voice users
         user_voice = {}
@@ -117,16 +129,10 @@ class HomeView(View):
         for user_id, seconds in cursor.fetchall():
             user_voice[user_id] = user_voice.get(user_id, 0) + seconds
 
-        top_voice_dict = {}
-        for user_id, seconds in user_voice.items():
-            try:
-                user = DiscordUser.objects.get(id=user_id)
-                top_voice_dict[user.username] = seconds
-            except DiscordUser.DoesNotExist:
-                pass
-
-        top_voice = sorted(top_voice_dict.items(), key=lambda x: x[1], reverse=True)[:5]
-        top_voice = [{'user': {'username': name}, 'hours': int(seconds // 3600)} for name, seconds in top_voice]
+        top_voice = [
+            {'user': user, 'hours': int(seconds // 3600)}
+            for user, seconds in users_sorted(user_voice)
+        ]
 
         # Top chatters
         user_messages = {}
@@ -137,16 +143,10 @@ class HomeView(View):
         for user_id, count in cursor.fetchall():
             user_messages[user_id] = user_messages.get(user_id, 0) + count
 
-        top_chatters_dict = {}
-        for user_id, count in user_messages.items():
-            try:
-                user = DiscordUser.objects.get(id=user_id)
-                top_chatters_dict[user.username] = count
-            except DiscordUser.DoesNotExist:
-                pass
-
-        top_chatters = sorted(top_chatters_dict.items(), key=lambda x: x[1], reverse=True)[:5]
-        top_chatters = [{'user': {'username': name}, 'messages': int(count)} for name, count in top_chatters]
+        top_chatters = [
+            {'user': user, 'messages': int(count)}
+            for user, count in users_sorted(user_messages)
+        ]
 
         cursor.close()
 

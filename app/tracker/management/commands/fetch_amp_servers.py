@@ -5,6 +5,7 @@ from pathlib import Path
 from django.core.management.base import BaseCommand
 from django.conf import settings
 from tracker.models import AMPServer, AMPServerMetric
+from tracker.steam import fetch_steam_app_id
 
 class Command(BaseCommand):
     help = 'Fetch AMP server data and IGDB cover art, store in database'
@@ -160,6 +161,12 @@ class Command(BaseCommand):
                     memory_usage_mb=memory,
                     active_users=users
                 )
+
+                if server.is_game() and server.steam_app_id is None:
+                    app_id = fetch_steam_app_id(server.module_display_name or server.friendly_name)
+                    if app_id:
+                        server.steam_app_id = app_id
+                        server.save(update_fields=['steam_app_id'])
 
                 if server.is_game() and not server.cover_fetched:
                     games_without_covers.append(server)

@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Beer & Revolution</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background: #0e0e0e; color: #e0e0e0; }
+        nav { background: #1a1a1a; padding: 20px; border-bottom: 2px solid #667eea; }
+        nav a { color: white; text-decoration: none; margin-right: 30px; transition: color 0.3s; }
+        nav a:hover { color: #667eea; }
+        .btn { display: inline-block; margin-top: 15px; padding: 10px 20px; background: #667eea; color: white; text-decoration: none; border-radius: 5px; }
+        .btn:hover { background: #764ba2; }
+    </style>
+</head>
+<body>
+    <nav>
+        <a href="/">🏠 Home</a>
+        <a href="/analytics/">📊 Analytics</a>
+        <a href="/admin/">⚙️ Admin</a>
+    </nav>
+    {% block content %}{% endblock %}
+</body>
+</html>
